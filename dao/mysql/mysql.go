@@ -3,11 +3,15 @@ package mysql
 import (
 	"database/sql"
 	"fmt"
+	"log"
+	"manager/models"
 	"manager/setting"
+	"os"
 	"time"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var Db *gorm.DB
@@ -22,6 +26,7 @@ func Init(cfg *setting.MySQLConfig) (err error) {
 		DSN:        dsn, // data source name, 详情参考：https://github.com/go-sql-driver/mysql#dsn-data-source-name
 	}), &gorm.Config{
 		DisableForeignKeyConstraintWhenMigrating: true,
+		Logger:                                   logger.New(log.New(os.Stdout, "\r\n", log.LstdFlags), logger.Config{LogLevel: logger.Info}),
 	})
 
 	if err != nil {
@@ -39,13 +44,15 @@ func Init(cfg *setting.MySQLConfig) (err error) {
 
 	// SetConnMaxLifetime sets the maximum amount of time a connection may be reused.
 	sqlDB.SetConnMaxLifetime(time.Hour)
-	// syncToDb()
+	syncToDb()
 	return
 }
 
-// func syncToDb() {
-// 	Db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&models.ServerNode{})
-// }
+func syncToDb() {
+	Db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&models.ServerNode{})
+	Db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&models.JupyterHub{})
+	Db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&models.UserSession{})
+}
 
 // Close 关闭MySQL连接
 func Close() {

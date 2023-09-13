@@ -3,6 +3,7 @@ package redis
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/go-redis/redis/v8"
 
@@ -31,6 +32,30 @@ func Init(cfg *setting.RedisConfig) (err error) {
 		return err
 	}
 	return nil
+}
+
+func RedisClient() *redis.Client {
+	return client
+}
+
+func RunWithLock(keyPrefix string, timeout time.Duration, callback func() (interface{}, error)) (rtn interface{}, err error) {
+	ctx := context.Background()
+	key := fmt.Sprintf("lock:%s", keyPrefix)
+	// 尝试获取锁
+	locked, err := client.SetNX(context.Background(), key, "1", timeout).Result()
+	if err != nil {
+		return
+	}
+
+	if !locked {
+		fmt.Printf("%s Lock already acquired\n", key)
+		return
+	}
+	fmt.Printf("%s Lock acquired, running business logic...", key)
+	defer func() {
+		_, _ = client.Del(ctx, key).Result()
+	}()
+	return callback()
 }
 
 func Close() {

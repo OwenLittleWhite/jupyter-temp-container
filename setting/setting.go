@@ -17,11 +17,18 @@ type AppConfig struct {
 	MachineID int64  `mapstructure:"machine_id"`
 	Port      int    `mapstructure:"port"`
 
-	*LogConfig   `mapstructure:"log"`
-	*MySQLConfig `mapstructure:"mysql"`
-	*RedisConfig `mapstructure:"redis"`
+	*LogConfig        `mapstructure:"log"`
+	*MySQLConfig      `mapstructure:"mysql"`
+	*RedisConfig      `mapstructure:"redis"`
+	*JupyterHubConfig `mapstructure:"jupyterHub"`
 }
 
+type JupyterHubConfig struct {
+	Image          string `mapstructure:"image"`
+	MaxSize        int    `mapstructure:"max_size"`
+	MaxSessionSize int    `mapstructure:"max_session_size"`
+	DefaultToken   string `mapstructure:"default_token"`
+}
 type MySQLConfig struct {
 	Host         string `mapstructure:"host"`
 	User         string `mapstructure:"user"`
