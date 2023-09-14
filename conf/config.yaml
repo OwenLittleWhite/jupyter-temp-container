@@ -32,3 +32,6 @@ jupyterHub:
   image: "keepwork/jupyterhub:v1.1"
   max_size: 6
   default_token: "600a421c384d8803117c827248b79a77"
+servers:
+  coreservice_url: "http://api-dev.kp-para.cn/core/v0"
+  internal_key: "c5147fb48c68bec375d6e62365264915"

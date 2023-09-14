@@ -21,6 +21,12 @@ type AppConfig struct {
 	*MySQLConfig      `mapstructure:"mysql"`
 	*RedisConfig      `mapstructure:"redis"`
 	*JupyterHubConfig `mapstructure:"jupyterHub"`
+	*ServersConfig    `mapstructure:"servers"`
+}
+
+type ServersConfig struct {
+	CoreserviceUrl string `mapstructure:"coreservice_url"`
+	InternalKey    string `mapstructure:"internal_key"`
 }
 
 type JupyterHubConfig struct {

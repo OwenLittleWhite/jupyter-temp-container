@@ -20,7 +20,7 @@ func CreateServerNodeHandler(c *gin.Context) {
 		return
 	}
 
-	var node = models.ServerNode{Url: p.Url}
+	var node = models.ServerNode{InternalIp: p.Url}
 	result := mysql.Db.Create(&node)
 	if result.Error != nil {
 		ResponseError(c, CodeServerBusy)

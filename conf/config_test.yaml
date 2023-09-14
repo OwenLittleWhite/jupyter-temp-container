@@ -33,3 +33,7 @@ jupyterHub:
   max_size: 6
   default_token: "600a421c384d8803117c827248b79a77"
   max_session_size: 20
+
+servers:
+  coreservice_url: "http://api-dev.kp-para.cn/core/v0"
+  internal_key: "aaa"

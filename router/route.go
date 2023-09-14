@@ -3,6 +3,7 @@ package router
 import (
 	"manager/controller"
 	"manager/logger"
+	"manager/middlewares"
 	"net/http"
 
 	// swaggerFiles "github.com/swaggo/files"
@@ -38,6 +39,8 @@ func SetupRouter(mode string) *gin.Engine {
 
 		// 投票
 		v1.GET("/serverNodes", controller.GetServerNodeHandler)
+
+		v1.POST("/userSessions", middlewares.JWTAuthMiddleware(), controller.CreateUserSessionHandler)
 	}
 
 	pprof.Register(r) // 注册pprof相关路由

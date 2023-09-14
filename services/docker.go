@@ -60,7 +60,7 @@ func DestroyDocker(containerId string, url string) (err error) {
 	if err != nil {
 		return
 	}
-	// 删除容器（在这个例子中，我们等待一段时间然后删除）
+	// 删除容器
 	if err := cli.ContainerRemove(context.Background(), containerId, types.ContainerRemoveOptions{Force: true}); err != nil {
 		return err
 	}
