@@ -41,6 +41,12 @@ func CreateUserSession(userId int, isVip bool) (userSessionRes UserSessionRes, e
 		}
 		mysql.Db.Create(&userSession)
 	}
+	if userSession.Status == 1 {
+		return UserSessionRes{
+			UserSession: &userSession,
+			Rank:        0,
+		}, nil
+	}
 	ctx := context.Background()
 	timestamp := float64(time.Now().UnixNano()) / float64(time.Second)
 	var queue string
@@ -65,6 +71,7 @@ func CreateUserSession(userId int, isVip bool) (userSessionRes UserSessionRes, e
 }
 
 func SequProcessUserSession() {
+	var protocol = setting.Conf.Protocol
 	client := redisDao.RedisClient()
 	ctx := context.Background()
 
@@ -110,7 +117,7 @@ func SequProcessUserSession() {
 		if userSession.ID == 0 {
 			return
 		}
-		mysql.Db.Model(&userSession).Updates(map[string]interface{}{"jupyter_hub_id": hub.ID, "token": tokenRes.Token, "token_id": tokenRes.Id, "url": fmt.Sprintf("http://%s:%v/user/%s", hub.ServerNode.ExternalIp, hub.Port, hub.Username), "connected_at": time.Now(), "status": 1})
+		mysql.Db.Model(&userSession).Updates(map[string]interface{}{"jupyter_hub_id": hub.ID, "token": tokenRes.Token, "token_id": tokenRes.Id, "url": fmt.Sprintf("%s://%s:%v/user/%s", protocol, hub.ServerNode.ExternalIp, hub.Port, hub.Username), "connected_at": time.Now(), "status": 1})
 
 		if hub.FirstConnectedAt.IsZero() {
 			mysql.Db.Model(&hub).Update("first_connected_at", time.Now()).Update("num", gorm.Expr("num+1"))
@@ -121,8 +128,9 @@ func SequProcessUserSession() {
 }
 
 func postUserToken(internalIp string, port int, username string) (tokenRes TokenRes, err error) {
+	var protocol = setting.Conf.Protocol
 	// 创建一个 HTTP 请求
-	url := fmt.Sprintf("http://%s:%v/hub/api/users/%s/tokens", internalIp, port, username)
+	url := fmt.Sprintf("%s://%s:%v/hub/api/users/%s/tokens", protocol, internalIp, port, username)
 	req, err := http.NewRequest("POST", url, nil)
 	if err != nil {
 		fmt.Println("创建请求时出错:", err)
@@ -167,8 +175,9 @@ func postUserToken(internalIp string, port int, username string) (tokenRes Token
 }
 
 func deleteUserToken(internalIp string, port int, username string, tokenId string) (err error) {
+	var protocol = setting.Conf.Protocol
 	// 创建一个 HTTP 请求
-	url := fmt.Sprintf("http://%s:%v/hub/api/users/%s/tokens/%s", internalIp, port, username, tokenId)
+	url := fmt.Sprintf("%s://%s:%v/hub/api/users/%s/tokens/%s", protocol, internalIp, port, username, tokenId)
 	req, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
 		fmt.Println("创建请求时出错:", err)

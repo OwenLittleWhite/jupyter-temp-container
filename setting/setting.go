@@ -34,6 +34,7 @@ type JupyterHubConfig struct {
 	MaxSize        int    `mapstructure:"max_size"`
 	MaxSessionSize int    `mapstructure:"max_session_size"`
 	DefaultToken   string `mapstructure:"default_token"`
+	Protocol       string `mapstructure:"protocol"`
 }
 type MySQLConfig struct {
 	Host         string `mapstructure:"host"`

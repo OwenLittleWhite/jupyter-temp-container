@@ -6,6 +6,7 @@ import (
 	"manager/dao/redis"
 	"manager/logger"
 	"manager/router"
+	"manager/scheduler"
 	"manager/setting"
 	"os"
 )
@@ -43,6 +44,9 @@ func main() {
 		return
 	}
 	defer redis.Close()
+
+	// 定时任务
+	scheduler.Init()
 	// 注册路由
 	r := router.SetupRouter(setting.Conf.Mode)
 	err := r.Run(fmt.Sprintf(":%d", setting.Conf.Port))

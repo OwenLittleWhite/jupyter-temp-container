@@ -34,8 +34,9 @@ func getRandomPort(exclude []int) (randomValue int) {
 }
 
 func createJupyterServer(internalIp string, port int, username string) (err error) {
+	var protocol = setting.Conf.Protocol
 	// 创建一个 HTTP 请求
-	url := fmt.Sprintf("http://%s:%v/hub/api/users/%s/server", internalIp, port, username)
+	url := fmt.Sprintf("%s://%s:%v/hub/api/users/%s/server", protocol, internalIp, port, username)
 	req, err := http.NewRequest("POST", url, nil)
 	if err != nil {
 		fmt.Println("创建请求时出错:", err)
@@ -87,6 +88,7 @@ func waitForServiceAvailability(url string) error {
 }
 func StartJupyterHubIfNotAvailable() (jupyterHubId uint, err error) {
 	id, err := redis.RunWithLock("StartJupyterHubIfNotAvailable", time.Second*30, func() (id interface{}, err error) {
+		var protocol = setting.Conf.Protocol
 		// 先查找是否有服务中的Hub
 		var hub models.JupyterHub
 		mysql.Db.Where("status = 1 and num < ?", setting.Conf.JupyterHubConfig.MaxSessionSize).Take(&hub)
@@ -118,7 +120,7 @@ func StartJupyterHubIfNotAvailable() (jupyterHubId uint, err error) {
 		if err != nil {
 			return
 		}
-		err = waitForServiceAvailability(fmt.Sprintf("http://%s:%v/hub/api", node.InternalIp, port))
+		err = waitForServiceAvailability(fmt.Sprintf("%s://%s:%v/hub/api", protocol, node.InternalIp, port))
 		if err != nil {
 			return
 		}

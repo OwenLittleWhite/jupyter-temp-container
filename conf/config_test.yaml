@@ -30,9 +30,10 @@ redis:
   pool_size: 100
 jupyterHub:
   image: "keepwork/jupyterhub:v1.1"
-  max_size: 6
+  max_size: 3
   default_token: "600a421c384d8803117c827248b79a77"
   max_session_size: 20
+  protocol: "https"
 
 servers:
   coreservice_url: "http://api-dev.kp-para.cn/core/v0"
