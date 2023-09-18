@@ -75,7 +75,7 @@ func createJupyterServer(internalIp string, port int, username string) (err erro
 }
 
 func waitForServiceAvailability(url string) error {
-	maxAttempts := 5
+	maxAttempts := 10
 	for i := 0; i < maxAttempts; i++ {
 		resp, err := http.Get(url)
 		if err == nil && resp.StatusCode == http.StatusOK {
