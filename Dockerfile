@@ -3,7 +3,7 @@ FROM golang:1.21 AS build
 
 # 设置工作目录
 WORKDIR /app
-
+ENV GOPROXY=https://mirrors.aliyun.com/goproxy/,direct
 # 复制 go.mod 和 go.sum 文件并下载依赖
 COPY go.mod go.sum ./
 RUN go mod download
@@ -15,7 +15,7 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o temp-container-manager .
 
 # 使用轻量的 alpine 镜像作为最终镜像
-FROM alpine:latest
+FROM alpine:20230901
 
 # 设置工作目录
 WORKDIR /root/
