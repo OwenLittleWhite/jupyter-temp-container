@@ -22,6 +22,7 @@ WORKDIR /root/
 
 # 从构建阶段复制二进制文件到最终镜像
 COPY --from=build /app/temp-container-manager .
+COPY --from=build /app/conf/config.yaml .
 
 # 设置环境变量
 ENV PORT=80
@@ -30,4 +31,4 @@ ENV PORT=80
 EXPOSE $PORT
 
 # 启动应用程序
-CMD ["./temp-container-manager", "/app/temp-container-manager/conf/config.yaml"]
+CMD ["./temp-container-manager", "./config.yaml"]
